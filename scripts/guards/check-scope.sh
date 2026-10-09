@@ -49,7 +49,10 @@ if [[ -z "$BASE" ]]; then
   exit 0
 fi
 
-mapfile -t CHANGED < <(git diff --name-only "$BASE" HEAD)
+CHANGED=()
+while IFS= read -r f; do
+  [[ -n "$f" ]] && CHANGED+=("$f")
+done < <(git diff --name-only "$BASE" HEAD)
 
 if [[ ${#CHANGED[@]} -eq 0 ]]; then
   echo "✅  scope check: no files changed since $BASE"
