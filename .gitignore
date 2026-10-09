@@ -79,3 +79,10 @@ __pycache__/
 # DeepEval wrapper — transient run artifacts (regenerated live)
 scripts/eval/deepeval/ts_verdicts.jsonl
 scripts/eval/deepeval/prompt_fixtures.jsonl
+
+# ref2game art pipeline outputs (chrono-art)
+art/gen/
+art/raw/
+art/logs/
+art/old/
+art/requests/

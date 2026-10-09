@@ -1,0 +1,12 @@
+[
+ {"name": "reg-scribe",  "prompt": "Terrified ancient Egyptian scribe, eyes wide with fearful awe, shaved head, clearly holding a modern pocket calculator with buttons near his face. No text, no signature, no border, full-bleed."},
+ {"name": "reg-senator", "prompt": "Suspicious Roman senator, jaw clenched, laurel wreath, clearly holding a smartphone with a glowing screen at chest level. No text, no signature, no border, full-bleed."},
+ {"name": "reg-viking",  "prompt": "Furious Viking chieftain, teeth bared, braided beard, scarred face, gripping a brass compass in his fist in front of his chest. No text, no signature, no border, full-bleed."},
+ {"name": "reg-monk",    "prompt": "Guilty medieval monk, trembling, hood and tonsure, clearly holding a tablet computer with a lit screen. No text, no signature, no border, full-bleed."},
+ {"name": "reg-samurai", "prompt": "Cold calculating samurai, narrowed eyes, topknot, clearly holding an instant photograph between his fingers. No text, no signature, no border, full-bleed."},
+ {"name": "reg-hetman",  "prompt": "Grim, determined Ukrainian Cossack hetman, shaved head with one long lock of hair from the crown, long drooping moustache and beard, fur collar, staring at a wristwatch on his raised wrist. No text, no signature, no border, full-bleed."},
+ {"name": "reg-priest",  "prompt": "Ecstatic Mesoamerican priest, mouth open in rapture, black paint across the eyes, round jade ear spools, tall headdress of long quetzal feathers on a golden band, holding a glowing electric light bulb. No text, no signature, no border, full-bleed."},
+ {"name": "reg-lady",    "prompt": "Shocked Victorian lady, eyes wide, lips parted in disbelief, high lace collar and hat, clearly holding a pair of white wireless earbuds between her fingers. No text, no signature, no border, full-bleed."},
+ {"name": "reg-empress", "prompt": "Contemptuous Qing dynasty empress, cold narrowed eyes, ornate headdress, holding a virtual reality headset at chest level. No text, no signature, no border, full-bleed."},
+ {"name": "reg-pilot",   "prompt": "Exhausted, haunted Second World War pilot, hollow eyes, leather flight cap with goggles pushed up, holding a small drone in both hands at chest level. No text, no signature, no border, full-bleed."}
+]

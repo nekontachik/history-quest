@@ -1,0 +1,12 @@
+{
+  "generator": {
+    "provider": "piapi",
+    "model": null,
+    "size": "768x1024",
+    "alpha": "none",
+    "jobs": 4,
+    "opts": {"piapi": {}, "fal": {}}
+  },
+  "style_bible": "art/style_bible.txt",
+  "style_ref": []
+}
