@@ -1,0 +1,5 @@
+# T4 — Run engine, pure (Wave 1)
+
+shared/game/run.ts
+shared/game/endings.ts
+tests/game/T4.test.ts

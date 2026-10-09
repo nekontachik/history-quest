@@ -1,0 +1,289 @@
+[
+  {
+    "id": "1648-c01",
+    "roleId": "doctor",
+    "speakerName": "A doctor from the future",
+    "line": "A doctor from the future offers plague medicine for the camp — enough for every tent, enough to end the fever by morning.",
+    "realEventRef": "1648-plague-camps",
+    "conflictType": "life_vs_history",
+    "left": {
+      "label": "Give the medicine",
+      "effects": {
+        "people": 20,
+        "stability": -20
+      },
+      "consequence": "The camp lives. Somewhere, a chronicle goes blank."
+    },
+    "right": {
+      "label": "Refuse",
+      "effects": {
+        "people": -15,
+        "faith": 5
+      },
+      "consequence": "The fever burns through the tents by dawn, and a prayer rises in the ash."
+    }
+  },
+  {
+    "id": "1648-c02",
+    "roleId": "noblewoman",
+    "speakerName": "Colonel's wife",
+    "line": "The colonel's wife begs you to warn her husband of an ambush you know he dies in; her hand is shaking on your sleeve.",
+    "realEventRef": "1648-korsun-ambush",
+    "conflictType": "truth_vs_peace",
+    "left": {
+      "label": "Warn him",
+      "effects": {
+        "stability": -15,
+        "power": 10
+      },
+      "consequence": "The colonel rides a different road. A line in the chronicle rewrites itself in the dark."
+    },
+    "right": {
+      "label": "Stay silent",
+      "effects": {
+        "people": -10,
+        "faith": -5
+      },
+      "consequence": "You keep the record. She keeps her tears, and he keeps his fate."
+    }
+  },
+  {
+    "id": "1648-c03",
+    "roleId": "spy",
+    "speakerName": "A scout out of breath",
+    "line": "A scout brings a smartphone from somewhere; its map shows every enemy position for a day's ride around the camp.",
+    "realEventRef": "1648-zhovti-vody",
+    "conflictType": "now_vs_later",
+    "left": {
+      "label": "Give it to the hetman",
+      "effects": {
+        "power": 25,
+        "stability": -10
+      },
+      "consequence": "The hetman wins the field by evening. The ground remembers a different victory."
+    },
+    "right": {
+      "label": "Destroy it",
+      "effects": {
+        "power": -10,
+        "stability": 10
+      },
+      "consequence": "You crush the glass under a boot. The field keeps its old shape, and so does the war."
+    }
+  },
+  {
+    "id": "1648-c04",
+    "roleId": "hetman",
+    "speakerName": "The hetman at the war table",
+    "line": "The hetman asks for a battle plan drawn from maps you brought from a time he cannot name; his officers wait at the door.",
+    "realEventRef": "1648-korsun-council",
+    "conflictType": "one_vs_many",
+    "left": {
+      "label": "Draw the plan",
+      "effects": {
+        "power": 15,
+        "stability": -10,
+        "people": 5
+      },
+      "consequence": "The officers leave with a map that should not exist. The war shifts a league to the east."
+    },
+    "right": {
+      "label": "Refuse",
+      "effects": {
+        "power": -10,
+        "faith": 10
+      },
+      "consequence": "The hetman nods, slow. The council takes its plan from the old maps and the old gods."
+    }
+  },
+  {
+    "id": "1648-c05",
+    "roleId": "monk",
+    "speakerName": "An old monk at the chapel",
+    "line": "An old monk shows you a battered insulin pen and asks if the sugar-sickness of the lord's daughter can be ended before Easter.",
+    "conflictType": "life_vs_history",
+    "left": {
+      "label": "Teach him to use it",
+      "effects": {
+        "people": 15,
+        "faith": -10
+      },
+      "consequence": "The girl walks on her own at Easter. The monastery's miracle book gains a line it will not keep."
+    },
+    "right": {
+      "label": "Take it away",
+      "effects": {
+        "faith": 10,
+        "people": -10
+      },
+      "consequence": "The monk watches the pen go into the fire. The girl is remembered as a saint by the autumn."
+    }
+  },
+  {
+    "id": "1648-c06",
+    "roleId": "merchant",
+    "speakerName": "A caravan merchant",
+    "line": "A merchant offers wagons of grain for the besieged town if you'll sign a note promising a road that will not be built in his lifetime.",
+    "conflictType": "now_vs_later",
+    "left": {
+      "label": "Sign the note",
+      "effects": {
+        "people": 15,
+        "power": -10
+      },
+      "consequence": "The grain goes north. A road the hetman never ordered appears on tomorrow's maps."
+    },
+    "right": {
+      "label": "Refuse",
+      "effects": {
+        "people": -10,
+        "stability": 5
+      },
+      "consequence": "The merchant turns his wagons south. The town counts its sacks and its hungry mouths."
+    }
+  },
+  {
+    "id": "1648-c07",
+    "roleId": "soldier",
+    "speakerName": "A young conscript",
+    "line": "A young conscript hands you a letter he wrote to his mother and asks whether tomorrow's charge will take him; he wants the truth, no softening.",
+    "conflictType": "truth_vs_peace",
+    "left": {
+      "label": "Tell him the truth",
+      "effects": {
+        "faith": -15,
+        "people": 5
+      },
+      "consequence": "He writes a second letter in the dark and seals it with a cold hand."
+    },
+    "right": {
+      "label": "Lie gently",
+      "effects": {
+        "faith": 10,
+        "stability": -5
+      },
+      "consequence": "He goes to sleep smiling. In the morning, the charge moves without him."
+    }
+  },
+  {
+    "id": "1648-c08",
+    "roleId": "scribe",
+    "speakerName": "A chronicle scribe",
+    "line": "A scribe asks whether to record the hetman's quiet retreat as a cunning manoeuvre; the ink is already on his quill.",
+    "realEventRef": "1648-pyliavtsi-chronicle",
+    "conflictType": "truth_vs_peace",
+    "left": {
+      "label": "Record the retreat",
+      "effects": {
+        "stability": 10,
+        "power": -15
+      },
+      "consequence": "The chronicle keeps its spine straight. Soldiers in the yard start a quieter song."
+    },
+    "right": {
+      "label": "Call it cunning",
+      "effects": {
+        "power": 10,
+        "stability": -5,
+        "faith": -5
+      },
+      "consequence": "The lie dries on the page. A legend walks out of the camp in bright armour."
+    }
+  },
+  {
+    "id": "1648-c09",
+    "roleId": "priest",
+    "speakerName": "A village priest",
+    "line": "A village priest asks you to bless the harvest in his place; he saw the small device in your hand and now believes you speak with heaven.",
+    "conflictType": "life_vs_history",
+    "left": {
+      "label": "Bless the harvest",
+      "effects": {
+        "faith": 20,
+        "people": 5,
+        "stability": -10
+      },
+      "consequence": "The village kneels. A new prayer, in your voice, enters the harvest book."
+    },
+    "right": {
+      "label": "Refuse the role",
+      "effects": {
+        "faith": -15,
+        "stability": 10
+      },
+      "consequence": "The priest finishes the blessing alone. The villagers watch you walk out, and their eyes narrow."
+    }
+  },
+  {
+    "id": "1648-c10",
+    "roleId": "peasant",
+    "speakerName": "A barefoot peasant woman",
+    "line": "A peasant woman asks for the small white pills in your satchel for her coughing child; she will trade a goat and her silence about where you came from.",
+    "conflictType": "one_vs_many",
+    "left": {
+      "label": "Give the pills",
+      "effects": {
+        "people": 10,
+        "stability": -10
+      },
+      "consequence": "The child sleeps through the night. The village keeps your secret, badly."
+    },
+    "right": {
+      "label": "Refuse",
+      "effects": {
+        "people": -10,
+        "faith": 5,
+        "stability": 5
+      },
+      "consequence": "She leaves without the goat. By morning, the child's cough is a wet rattle in the wall."
+    }
+  },
+  {
+    "id": "1648-c11",
+    "roleId": "doctor",
+    "speakerName": "A field surgeon",
+    "line": "A field surgeon asks to use the small lighted tube you carry to see inside a wounded captain's chest; the captain is listed among tomorrow's dead.",
+    "realEventRef": "1648-korsun-wounded",
+    "conflictType": "one_vs_many",
+    "left": {
+      "label": "Let him work",
+      "effects": {
+        "people": 15,
+        "stability": -15
+      },
+      "consequence": "The captain draws a breath that was not his to take. His name moves to a list of the living."
+    },
+    "right": {
+      "label": "Take the device back",
+      "effects": {
+        "people": -10,
+        "stability": 10
+      },
+      "consequence": "The surgeon washes his hands in silence. The captain is buried with his sword at dusk."
+    }
+  },
+  {
+    "id": "1648-c12",
+    "roleId": "spy",
+    "speakerName": "A courier in the dark",
+    "line": "A courier asks you to switch two sealed letters before dawn; one carries a lie that keeps a hundred men alive, the other, the truth that will cost them.",
+    "conflictType": "one_vs_many",
+    "left": {
+      "label": "Switch the letters",
+      "effects": {
+        "people": 20,
+        "faith": -10,
+        "stability": -5
+      },
+      "consequence": "The hundred wake up to march. The truth sleeps the night under another man's seal."
+    },
+    "right": {
+      "label": "Leave them",
+      "effects": {
+        "faith": 10,
+        "people": -15
+      },
+      "consequence": "You walk past the saddlebag. The courier rides, and so does the morning."
+    }
+  }
+]

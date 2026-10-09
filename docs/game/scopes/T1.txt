@@ -1,0 +1,8 @@
+# T1 — PiAPI provider with fal fallback (Wave 1)
+
+lib/ai/providers/**
+docs/adr/006-piapi-over-fal.md
+lib/ai/image.ts
+.env.local.example
+CLAUDE.md
+tests/game/T1.test.ts

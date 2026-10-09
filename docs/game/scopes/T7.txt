@@ -1,0 +1,6 @@
+# T7 — Character pool data + seed script (Wave 2)
+
+shared/game/pool-subjects.ts
+lib/game/pool.ts
+scripts/seed-pool.ts
+tests/game/T7.test.ts

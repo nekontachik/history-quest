@@ -1,0 +1,15 @@
+# G0 — Contracts, guards, acceptance tests (Wave 0)
+# One glob per line (POSIX shell `case` semantics). # comments and blank lines allowed.
+
+types/game.ts
+shared/game/schemas.ts
+constants/game.ts
+constants/image.ts
+tests/fixtures/game/**
+tests/game/**
+scripts/guards/**
+scripts/worktrees.sh
+docs/game/scopes/**
+package.json
+config/vitest.config.ts
+.github/workflows/**

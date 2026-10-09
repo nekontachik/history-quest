@@ -1,0 +1,6 @@
+# I1 — Image pipeline integration (Wave 2)
+
+lib/ai/image.ts
+app/api/image/**
+scripts/style-check.ts
+tests/game/I1.test.ts

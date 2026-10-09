@@ -1,0 +1,10 @@
+# T8 — Endings, artifact, decision tree, Atlas (Wave 3)
+
+app/api/game/artifact/**
+components/features/ChronoAgent/Ending/**
+app/atlas/**
+middleware.ts
+messages/uk.json
+messages/en.json
+tests/e2e/game-ending.spec.ts
+tests/game/T8.test.ts

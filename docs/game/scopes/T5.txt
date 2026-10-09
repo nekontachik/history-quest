@@ -1,0 +1,5 @@
+# T5 — Image prompt builders + QA checklist (Wave 1)
+
+shared/game/image-prompts.ts
+lib/ai/image-qa.ts
+tests/game/T5.test.ts

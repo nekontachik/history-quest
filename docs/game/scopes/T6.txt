@@ -1,0 +1,9 @@
+# T6 — Game screen (Wave 2)
+
+components/features/ChronoAgent/**
+app/page.tsx
+app/api/game/portrait/**
+messages/uk.json
+messages/en.json
+tests/e2e/game-play.spec.ts
+tests/game/T6.test.ts

@@ -36,6 +36,8 @@
     "test:e2e:ui": "playwright test --config config/playwright.config.ts --ui",
     "test:e2e:smoke": "playwright test --config config/playwright.config.ts tests/e2e/smoke.spec.ts",
     "check:server-only": "bash scripts/check-server-only.sh",
+    "guard:scope": "bash scripts/guards/check-scope.sh",
+    "guard:tests": "bash scripts/guards/check-tests.sh",
     "eval": "npx tsx scripts/eval-harness.ts",
     "test:component": "vitest run --config config/vitest.component.config.ts",
     "redteam:verify": "node redteam/selfcheck.mjs",
