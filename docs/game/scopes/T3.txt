@@ -1,0 +1,6 @@
+# T3 — Deck generation API (Wave 1)
+
+lib/game/deck.ts
+lib/game/deck-prompt.ts
+app/api/game/deck/**
+tests/game/T3.test.ts

@@ -46,6 +46,40 @@ jobs:
       - name: Check all lib/ files have import "server-only"
         run: bash scripts/check-server-only.sh
 
+  # ── 2b. Scope + tests freeze guard (PR-only) ─────────────────────────────
+  # Derives <ID> from the PR head branch name (branches follow game/<ID>) and
+  # runs both guards. On non-PR events the job is skipped — guards only matter
+  # for the task-scoped PR workflow described in docs/game/EXECUTION_PLAN.md.
+  scope-and-tests-guard:
+    name: "🛡️ Scope + tests guard"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Derive task ID from head branch
+        id: id
+        run: |
+          REF="${{ github.head_ref }}"
+          case "$REF" in
+            game/*) ID="${REF#game/}" ;;
+            *)      ID="" ;;
+          esac
+          if [[ -z "$ID" ]]; then
+            echo "head branch '$REF' is not a game/<ID> branch — skipping guards"
+          fi
+          echo "id=$ID" >> "$GITHUB_OUTPUT"
+
+      - name: guard:scope
+        if: steps.id.outputs.id != ''
+        run: bash scripts/guards/check-scope.sh "${{ steps.id.outputs.id }}"
+
+      - name: guard:tests
+        if: steps.id.outputs.id != ''
+        run: bash scripts/guards/check-tests.sh "${{ steps.id.outputs.id }}"
+
   # ── 3. TypeScript ────────────────────────────────────────────────────────
   type-check:
     name: "🔷 TypeScript"
@@ -205,7 +239,7 @@ jobs:
   summary:
     name: "📋 Report"
     runs-on: ubuntu-latest
-    needs: [lint, server-only-check, type-check, build, component-tests, unit-tests]
+    needs: [lint, server-only-check, scope-and-tests-guard, type-check, build, component-tests, unit-tests]
     if: always()
     steps:
       - name: Write pipeline report
@@ -213,6 +247,7 @@ jobs:
           DATE=$(date -u '+%Y-%m-%d %H:%M UTC')
           LINT="${{ needs.lint.result }}"
           SERVER_ONLY="${{ needs.server-only-check.result }}"
+          GUARDS="${{ needs.scope-and-tests-guard.result }}"
           TYPES="${{ needs.type-check.result }}"
           BUILD="${{ needs.build.result }}"
           COMPONENT="${{ needs.component-tests.result }}"
@@ -228,7 +263,10 @@ jobs:
             esac
           }
 
-          if [ "$LINT" = "success" ] && [ "$SERVER_ONLY" = "success" ] && [ "$TYPES" = "success" ] && [ "$BUILD" = "success" ] && [ "$COMPONENT" = "success" ] && [ "$UNIT" = "success" ]; then
+          # scope-and-tests-guard is PR-only, so `skipped` counts as a pass here.
+          guard_ok() { [ "$1" = "success" ] || [ "$1" = "skipped" ]; }
+
+          if [ "$LINT" = "success" ] && [ "$SERVER_ONLY" = "success" ] && guard_ok "$GUARDS" && [ "$TYPES" = "success" ] && [ "$BUILD" = "success" ] && [ "$COMPONENT" = "success" ] && [ "$UNIT" = "success" ]; then
             OVERALL="✅ All checks passed"
           else
             OVERALL="❌ Pipeline failed"
@@ -242,6 +280,7 @@ jobs:
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| 🔍 Lint           | $(icon $LINT) \`$LINT\`            |" >> $GITHUB_STEP_SUMMARY
           echo "| 🔒 Server-only    | $(icon $SERVER_ONLY) \`$SERVER_ONLY\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🛡️ Scope + tests  | $(icon $GUARDS) \`$GUARDS\`        |" >> $GITHUB_STEP_SUMMARY
           echo "| 🔷 TypeScript     | $(icon $TYPES) \`$TYPES\`          |" >> $GITHUB_STEP_SUMMARY
           echo "| 🏗️ Build          | $(icon $BUILD) \`$BUILD\`          |" >> $GITHUB_STEP_SUMMARY
           echo "| 🧩 Components     | $(icon $COMPONENT) \`$COMPONENT\`  |" >> $GITHUB_STEP_SUMMARY

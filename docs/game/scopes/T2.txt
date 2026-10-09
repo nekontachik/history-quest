@@ -1,0 +1,7 @@
+# T2 — Vercel Blob image store (Wave 1)
+
+lib/infrastructure/image-store.ts
+lib/og.ts
+next.config.mjs
+package.json
+tests/game/T2.test.ts
