@@ -13,3 +13,4 @@ docs/game/scopes/**
 package.json
 config/vitest.config.ts
 .github/workflows/**
+docs/game/EXECUTION_PLAN.md

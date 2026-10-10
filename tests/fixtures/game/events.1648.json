@@ -1,0 +1,23 @@
+[
+  {
+    "id": "1648-zhovti-vody",
+    "title": "Battle of Zhovti Vody",
+    "description": "Cossack and Crimean Tatar forces under Bohdan Khmelnytsky defeat a Polish-Lithuanian vanguard, opening the Khmelnytsky Uprising.",
+    "impact": "high",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Battle_of_Zhovti_Vody",
+    "wikipediaUrl": "https://en.wikipedia.org/wiki/Battle_of_Zhovti_Vody"
+  },
+  {
+    "id": "1648-westphalia",
+    "title": "Peace of Westphalia",
+    "description": "Treaties signed in Osnabrück and Münster end the Thirty Years' War.",
+    "impact": "high",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Peace_of_Westphalia"
+  },
+  {
+    "id": "1648-unsourced",
+    "title": "An event the search could not confirm",
+    "description": "Returned by the title model, but Tavily and Wikipedia found nothing.",
+    "impact": "low"
+  }
+]

@@ -37,6 +37,9 @@ jobs:
       - name: ESLint
         run: npm run lint
 
+      - name: No stub acceptance tests
+        run: npm run guard:stubs
+
   # ── 2. Server-only boundary check ────────────────────────────────────────
   server-only-check:
     name: "🔒 Server-only boundary"

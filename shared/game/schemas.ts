@@ -177,14 +177,23 @@ export type ValidateDeckResult = ValidateDeckOk | ValidateDeckErr;
  *   4. Per-card effects: 1–3 meters, integers in [-25, 25]
  *   5. Conflict-type cap <= 3 per type
  *   6. >= 4 cards with realEventRef
+ *   7. (when groundedEventIds given) every realEventRef ∈ groundedEventIds
  *
  * Errors are human-readable strings including the failing rule name
  * (`size`, `effects range`, `effects count`, `effects integer`, `conflict`,
- * `realEvent`, `role`) and, where applicable, the card index.
+ * `realEvent`, `role`, `grounding`) and, where applicable, the card index.
  */
 export function validateDeck(
   raw: unknown,
   allowedRoleIds: readonly string[],
+  /**
+   * G0b grounding rule. Ids of the year's events that came back from the
+   * existing Time Machine pipeline (`generateEvents` → Tavily/Wikipedia) WITH
+   * a source URL. When given, every `realEventRef` must be one of these ids —
+   * a card may not cite an event the grounded pipeline did not return.
+   * Omit only in unit tests that do not exercise grounding.
+   */
+  groundedEventIds?: readonly string[],
 ): ValidateDeckResult {
   const parsed = DeckSchema.safeParse(raw);
   if (!parsed.success) {
@@ -205,6 +214,20 @@ export function validateDeck(
   });
   if (roleErrors.length) {
     return { ok: false, errors: roleErrors };
+  }
+
+  if (groundedEventIds) {
+    const groundErrors: string[] = [];
+    parsed.data.forEach((card, idx) => {
+      if (card.realEventRef && !groundedEventIds.includes(card.realEventRef)) {
+        groundErrors.push(
+          `card ${idx}: grounding rule violated — realEventRef '${card.realEventRef}' is not one of the year's sourced events [${groundedEventIds.join(", ")}]`,
+        );
+      }
+    });
+    if (groundErrors.length) {
+      return { ok: false, errors: groundErrors };
+    }
   }
 
   return { ok: true, deck: parsed.data };

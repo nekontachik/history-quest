@@ -38,6 +38,7 @@
     "check:server-only": "bash scripts/check-server-only.sh",
     "guard:scope": "bash scripts/guards/check-scope.sh",
     "guard:tests": "bash scripts/guards/check-tests.sh",
+    "guard:stubs": "node scripts/guards/check-test-stubs.mjs",
     "eval": "npx tsx scripts/eval-harness.ts",
     "test:component": "vitest run --config config/vitest.component.config.ts",
     "redteam:verify": "node redteam/selfcheck.mjs",
