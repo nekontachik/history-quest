@@ -79,4 +79,20 @@ describe("validateDeck", () => {
       expect(res.errors.some((e) => /integer/i.test(e))).toBe(true);
     }
   });
+
+  test("grounding rule: every realEventRef must be a sourced event of the year", () => {
+    const refs = Array.from(
+      new Set(
+        (deckValid as Array<{ realEventRef?: string }>)
+          .map((c) => c.realEventRef)
+          .filter((r): r is string => !!r),
+      ),
+    );
+    expect(validateDeck(deckValid, ROLES, refs).ok).toBe(true);
+    const res = validateDeck(deckValid, ROLES, refs.slice(1));
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.errors.some((e) => /grounding/i.test(e) && e.includes(refs[0]))).toBe(true);
+    }
+  });
 });

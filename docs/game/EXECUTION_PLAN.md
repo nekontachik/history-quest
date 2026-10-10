@@ -8,7 +8,8 @@ Every task below is one agent, one git worktree, one branch, one PR into `main`.
 ## 0. How this plan prevents slop
 
 1. **Contracts first, frozen.** Wave 0 writes all shared types, zod schemas, constants and fixtures. Later tasks code *against* them and may not change them.
-2. **Tests first.** Wave 0 also writes the acceptance tests of every later task, tagged `[T1]`…`[T8]` and wrapped in `describe.skip`. A task is done when it flips **only its own** `describe.skip` → `describe` and those tests pass **without editing assertions**. `npm run guard:tests` enforces this.
+2. **Tests first.** Wave 0 also writes the acceptance tests of every later task, tagged `[T1]`…`[T8]` and wrapped in `describe.skip`. A task is done when it flips **only its own** `describe.skip` → `describe` and those tests pass **without editing assertions**. `npm run guard:tests` enforces this. Acceptance tests must assert **behaviour** (calls made, values returned, errors surfaced), never only that an export exists: `npm run guard:stubs` fails CI on any active `[ID]` test without a behavioural `expect` (added in G0b after the first G0 tests turned out to be existence-only stubs).
+7. **Reuse the Time Machine truth pipeline.** Real history comes only from the existing `generateEvents` (Gemini titles → Tavily + Wikipedia enrichment, cached). A card may cite an event only if that pipeline returned it with a `sourceUrl`/`wikipediaUrl` (`validateDeck(..., groundedEventIds)`). Quality is measured with the existing eval stack (`scripts/eval`, `eval-harness.ts`, judges, `_parity`, `ciChecks`), not a new one.
 3. **Exclusive file ownership.** Each task owns a list of paths (`docs/game/scopes/<ID>.txt`). `npm run guard:scope -- <ID>` fails the PR if the branch touched anything else.
 4. **No invented APIs.** Every external call (PiAPI, fal, OpenRouter, Vercel Blob) is coded against a recorded fixture in `tests/fixtures/game/` or the official doc linked in the task. If a field is not in a fixture or doc, the agent stops and reports — it does not guess.
 5. **LLM output is untrusted input.** Every LLM response goes through a zod schema + semantic validators; invalid → one retry → typed error. Never `JSON.parse` without validation, never render unvalidated text.
@@ -111,9 +112,10 @@ Card format: **Goal · Depends · Owns (exclusive) · Inputs · Build · Accepta
 ### T3 — Deck generation API (Wave 1)
 - **Goal:** `POST /api/game/deck` returns a validated 12-card deck for a year.
 - **Owns:** `lib/game/deck.ts`, `lib/game/deck-prompt.ts`, `app/api/game/deck/**`.
-- **Inputs:** GAME_SPEC §2–5 (dilemma rules verbatim in the system prompt; 1648 examples as few-shot); existing `lib/ai/text.ts` client and historical-events lib function (import, don't HTTP).
-- **Build:** one OpenRouter call (scenario model) → strip code fences → `validateDeck` → on failure one retry with the errors appended → else 502 `{ error: "deck_invalid" }`. Random year when omitted; era from `ERAS`; mission + bonus goal from constants; Redis cache key `deck:${STYLE_VERSION}:${year}:${locale}` 1 h, fail-open.
-- **Acceptance (`[T3]`):** valid fixture → 200 with 12 cards; fenced fixture → parsed; truncated → retry then 502; invalid roleId → retry; system prompt contains every rule from GAME_SPEC §5 (string checks); real events passed into prompt; cache hit skips LLM.
+- **Inputs:** GAME_SPEC §2–5 (dilemma rules verbatim in the system prompt; 1648 examples as few-shot); existing `lib/ai/text.ts` client; **existing `generateEvents(year, "en")` from `lib/ai/text.ts` behind the existing event cache (`lib/infrastructure/cache.ts`)** — import, don't HTTP, don't re-implement.
+- **Contract (fixed in `tests/game/T3.test.ts` header):** `generateDeck({year, locale}, deps?)` with injectable `getEvents`, `complete`, `cache`; returns `{ok:true, deck, events}` (sourced events only) or `{ok:false, error:"deck_invalid"|"deck_ungrounded", errors}`; `buildDeckSystemPrompt(year, events)`.
+- **Build:** `getEvents(year)` → keep only events with `sourceUrl` or `wikipediaUrl` (zero left → `deck_ungrounded`, no deck LLM call) → prompt lists each sourced event as `id · title · source URL` → one OpenRouter call (scenario model) → strip code fences → `validateDeck(raw, roles, sourcedIds)` → on failure one retry with the errors appended → else 502 `{ error: "deck_invalid" }`. The API response carries the sourced events so the UI can link each "real event" badge to its source. Random year when omitted; era from `ERAS`; mission + bonus goal from constants; Redis cache key `deck:${STYLE_VERSION}:${year}:${locale}` 1 h, fail-open.
+- **Acceptance (`[T3]`):** valid output → 12 cards + sourced events only; fenced → parsed; truncated → exactly one retry then `deck_invalid`; invalid roleId → retry prompt carries the errors; card citing an event not returned by the pipeline → rejected (`grounding`); unsourced event not citable; zero sourced events → `deck_ungrounded` without deck LLM call; system prompt contains all 7 GAME_SPEC §5 rules verbatim and every sourced event's id/title/URL; cache hit skips events + LLM; route maps `deck_invalid` → 502.
 - **Must not:** generate images; touch UI; loosen the schema.
 
 ### T4 — Run engine, pure (Wave 1)
@@ -156,7 +158,7 @@ Card format: **Goal · Depends · Owns (exclusive) · Inputs · Build · Accepta
 
 ### E1 — Deck quality eval (Wave 3)
 - **Owns:** `scripts/eval/game/**`.
-- **Build:** reuse the existing eval harness (`scripts/eval`, judge via OpenRouter) to generate 20 decks for 10 years and score each card on: both options cost something, effects match text, no gore/living people, anachronism drives the dilemma; output a ✅/❌ table + failing examples.
+- **Build:** reuse the existing eval harness (`scripts/eval`, judge via OpenRouter) to generate 20 decks for the **same 10 years as `scripts/eval-harness.ts` `EVAL_YEARS`** and score: (a) **factual** — every `realEventRef` resolves to a sourced event and the card's claim about it is supported by that event's Tavily-enriched description (judge sees both; unsupported = ❌), plus the existing `mustInclude` keyword check on the year's events; (b) **design** — both options cost something, effects match text, no gore/living people, anachronism drives the dilemma. Pin the deck prompt in `_parity.ts` like the scenario prompt, and add the committed baseline to `ciChecks.ts`. Output a ✅/❌ table + failing examples.
 - **Acceptance:** `--dry-run` works offline; report format matches existing eval outputs. Owner runs it live before Gate B.
 
 ### S1 + Gate B (Wave 4, owner)
