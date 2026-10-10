@@ -51,7 +51,8 @@
 ## Environment Variables
 ```
 OPENROUTER_API_KEY=      # required — text generation (events + scenarios)
-FAL_KEY=                 # required — image + video generation via fal.ai
+PIAPI_KEY=               # optional — primary image provider (Flux Schnell via PiAPI); unset → fal direct
+FAL_KEY=                 # required — image fallback + video generation via fal.ai
 REDIS_URL=               # optional — cache + rate limiting (fail-open without)
 RATE_LIMIT_FREE=         # optional — free req/day limit (default 3)
 NEXT_PUBLIC_APP_URL=http://localhost:3000

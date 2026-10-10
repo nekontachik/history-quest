@@ -1,6 +1,7 @@
 import "server-only";
 import { fal } from "@fal-ai/client";
 import { IMAGE_MODEL, IMAGE_TIMEOUT_MS, IMAGE_MAX_ATTEMPTS } from "@/constants";
+import { piapiGenerate, PiapiError } from "./providers/piapi";
 
 /**
  * Image generation via fal.ai (Flux 1 Schnell).
@@ -87,9 +88,37 @@ function normalizeFalError(err: unknown): Error {
 // Single Flux call with timeout
 // ---------------------------------------------------------------------------
 
-async function callFlux(prompt: string): Promise<string> {
+// PiAPI primary, fal fallback. Signature allows a width/height per T1 card;
+// defaults match the existing scenario (16:9 scene) so other callers stay
+// unchanged. PIAPI_KEY absent → PiAPI is never called. A billing-class failure
+// from PiAPI (401/402/403 or "insufficient") that is NOT rescued by a
+// subsequent fal success surfaces as the shared FalAuthError.
+export async function callFlux(
+  prompt: string,
+  width: number = 1024,
+  height: number = 576,
+): Promise<string> {
+  const piapiKey = process.env.PIAPI_KEY;
+  let billingError: FalAuthError | undefined;
+
+  if (piapiKey) {
+    try {
+      return await piapiGenerate({ prompt, width, height });
+    } catch (err) {
+      if (
+        err instanceof PiapiError &&
+        err.status != null &&
+        (err.status === 401 || err.status === 402 || err.status === 403)
+      ) {
+        billingError = new FalAuthError(err.message);
+      }
+      // Fall through to fal on any PiAPI failure.
+    }
+  }
+
+  const imageSize = height > width ? "portrait_4_3" : "landscape_16_9";
   const timeoutPromise = new Promise<never>((_, reject) =>
-    setTimeout(() => reject(new Error("fal.ai timeout")), IMAGE_TIMEOUT_MS)
+    setTimeout(() => reject(new Error("fal.ai timeout")), IMAGE_TIMEOUT_MS),
   );
 
   let result: unknown;
@@ -98,25 +127,23 @@ async function callFlux(prompt: string): Promise<string> {
       fal.subscribe(IMAGE_MODEL, {
         input: {
           prompt,
-          image_size: "landscape_16_9",
+          image_size: imageSize,
           num_images: 1,
         },
       }),
       timeoutPromise,
     ]);
   } catch (err) {
-    // Re-throw as a normalised Error so catch blocks always get an Error instance
+    if (billingError) throw billingError;
     throw normalizeFalError(err);
   }
 
-  console.log(
-    "[flux] response images:",
-    (result as { data: { images: { url: string }[] } }).data?.images?.length
-  );
-
   const imageUrl = (result as { data: { images: { url: string }[] } }).data
     ?.images?.[0]?.url;
-  if (!imageUrl) throw new Error("No image returned from fal.ai");
+  if (!imageUrl) {
+    if (billingError) throw billingError;
+    throw new Error("No image returned from fal.ai");
+  }
 
   return imageUrl;
 }

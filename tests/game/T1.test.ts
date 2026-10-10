@@ -15,7 +15,7 @@ import { dyn } from "./_dyn";
 //                "402 + fal failure → billing error"
 //                "request body equals fixture shape exactly (`model`, `task_type`, `input.width/height`)"
 
-describe.skip("[T1] PiAPI provider with fal fallback", () => {
+describe("[T1] PiAPI provider with fal fallback", () => {
   test("PiAPI provider module exports a client", async () => {
     const mod = (await dyn("@/lib/ai/providers/piapi")) as Record<
       string,
