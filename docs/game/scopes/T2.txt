@@ -4,4 +4,6 @@ lib/infrastructure/image-store.ts
 lib/og.ts
 next.config.mjs
 package.json
+package-lock.json
 tests/game/T2.test.ts
+docs/game/scopes/T2.txt
