@@ -11,7 +11,7 @@ import { dyn } from "./_dyn";
 //                "`put` throws → source URL"
 //                "Blob host present in og + next config"
 
-describe.skip("[T2] Vercel Blob image store", () => {
+describe("[T2] Vercel Blob image store", () => {
   test("image-store exports persistImage", async () => {
     const mod = (await dyn("@/lib/infrastructure/image-store")) as Record<
       string,

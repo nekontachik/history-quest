@@ -10,7 +10,11 @@ export const OG_DEFAULT_IMAGE = "/og-default.jpg";
 
 /** Hosts we are willing to advertise in an OG/Twitter card. Must stay in sync
  *  with images.remotePatterns in next.config.mjs. */
-const OG_IMAGE_HOSTS = ["fal.media", "storage.googleapis.com"];
+const OG_IMAGE_HOSTS = [
+  "fal.media",
+  "storage.googleapis.com",
+  "public.blob.vercel-storage.com",
+];
 
 /**
  * `imageUrl` arrives from the query string, so without a check anyone can send
