@@ -12,7 +12,7 @@ import { dyn } from "./_dyn";
 //                "all 10 regression subjects from art/prompts/regression.json build under the limit"
 //                "QA parses fixture JSON and rejects malformed"
 
-describe.skip("[T5] Image prompt builders + QA checklist", () => {
+describe("[T5] Image prompt builders + QA checklist", () => {
   test("image-prompts module exports buildImagePrompt and eraWords", async () => {
     const mod = (await dyn("@/shared/game/image-prompts")) as Record<
       string,
