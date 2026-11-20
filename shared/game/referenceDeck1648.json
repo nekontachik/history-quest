@@ -48,12 +48,12 @@
       "left": {
         "label": "Say only God knows",
         "effects": { "people": -5, "faith": 4 },
-        "consequence": "He leaves with no answer and prays three nights at the roadside cross; the village remembers that you had no comfort to give."
+        "consequence": "She leaves with no answer and prays three nights at the roadside cross; the village remembers that you had no comfort to give."
       },
       "right": {
         "label": "Promise the boy will live",
         "effects": { "stability": -6, "people": 8 },
-        "consequence": "He believes you far too easily, and by morning half the village has heard that you know how battles end.",
+        "consequence": "She believes you far too easily, and by morning half the village has heard that you know how battles end.",
         "fadesEntryId": "zhovti-vody"
       }
     },

@@ -8,6 +8,8 @@ import { clone, makeDeck } from "../game/_deck";
 // Mocks — the model, the events loader and Redis. No network.
 // ---------------------------------------------------------------------------
 
+import type { Deck } from "@/types/game";
+
 const mockCreate = vi.fn();
 const mockGenerateEvents = vi.fn();
 const mockGetCachedEvents = vi.fn();
@@ -57,13 +59,31 @@ function answer(content: string | null) {
   return { choices: [{ message: { content } }] };
 }
 
+/**
+ * What the model sends back: the helper deck's cards around the five
+ * reference entry ids, with Chronicle text of its own.
+ */
+function modelDeck(): Deck {
+  const ids = referenceDeck.chronicle.map((e) => e.id);
+  let json = JSON.stringify(makeDeck());
+  ids.forEach((id, i) => {
+    json = json.split(`"e${i + 1}"`).join(`"${id}"`);
+  });
+  return JSON.parse(json) as Deck;
+}
+
+/** What the route must answer: the model's cards, the hand-checked Chronicle. */
+function servedDeck(): Deck {
+  return { ...modelDeck(), chronicle: referenceDeck.chronicle as Deck["chronicle"] };
+}
+
 function validDeckJson(): string {
-  return JSON.stringify(makeDeck());
+  return JSON.stringify(modelDeck());
 }
 
 /** A deck with one fault: card c01 gets an unknown portrait role. */
 function invalidDeckJson(): string {
-  const deck = clone(makeDeck());
+  const deck = clone(modelDeck());
   deck.cards[0].roleId = "king";
   return JSON.stringify(deck);
 }
@@ -84,6 +104,7 @@ describe("POST /api/game/deck", () => {
     vi.unstubAllEnvs();
     vi.stubEnv("OPENROUTER_API_KEY", "test-key");
     vi.stubEnv("DECK_FIXTURE", "");
+    vi.stubEnv("DECK_LIVE", "1");
     vi.stubEnv("RATE_LIMIT_SCENARIO", "");
 
     mockCreate.mockReset();
@@ -106,6 +127,18 @@ describe("POST /api/game/deck", () => {
   });
 
   // ── Reference deck without a model call ────────────────────────────────
+
+  it("returns the reference deck with no model call unless DECK_LIVE=1", async () => {
+    vi.stubEnv("DECK_LIVE", "");
+
+    const res = await POST(makeRequest());
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("x-deck-source")).toBe("reference");
+    expect(await res.json()).toEqual(referenceDeck);
+    expect(mockCreate).not.toHaveBeenCalled();
+    expect(mockRedis.eval).not.toHaveBeenCalled();
+  });
 
   it("returns the reference deck with no model call when DECK_FIXTURE=1", async () => {
     vi.stubEnv("DECK_FIXTURE", "1");
@@ -142,7 +175,7 @@ describe("POST /api/game/deck", () => {
 
     expect(res.status).toBe(200);
     expect(res.headers.get("x-deck-source")).toBe("generated");
-    expect(await res.json()).toEqual(makeDeck());
+    expect(await res.json()).toEqual(servedDeck());
     expect(mockCreate).toHaveBeenCalledTimes(1);
   });
 
@@ -174,19 +207,19 @@ describe("POST /api/game/deck", () => {
     const res = await POST(makeRequest());
 
     expect(res.headers.get("x-deck-source")).toBe("generated");
-    expect(await res.json()).toEqual(makeDeck());
+    expect(await res.json()).toEqual(servedDeck());
     expect(mockCreate).toHaveBeenCalledTimes(1);
   });
 
   it("drops fields the contract does not know before answering", async () => {
-    const deck = clone(makeDeck()) as unknown as Record<string, unknown>;
+    const deck = clone(modelDeck()) as unknown as Record<string, unknown>;
     deck.note = "<script>alert(1)</script>";
     mockCreate.mockResolvedValueOnce(answer(JSON.stringify(deck)));
 
     const res = await POST(makeRequest());
 
     const body = await res.json();
-    expect(body).toEqual(makeDeck());
+    expect(body).toEqual(servedDeck());
     expect(body).not.toHaveProperty("note");
   });
 
@@ -202,7 +235,7 @@ describe("POST /api/game/deck", () => {
 
     expect(res.status).toBe(200);
     expect(res.headers.get("x-deck-source")).toBe("generated");
-    expect(await res.json()).toEqual(makeDeck());
+    expect(await res.json()).toEqual(servedDeck());
     expect(mockCreate).toHaveBeenCalledTimes(2);
 
     const first = mockCreate.mock.calls[0][0].messages;
@@ -244,7 +277,7 @@ describe("POST /api/game/deck", () => {
   });
 
   it("falls back to the reference deck when the deck is for another year", async () => {
-    const deck = clone(makeDeck());
+    const deck = clone(modelDeck());
     deck.year = 1649;
     mockCreate.mockResolvedValue(answer(JSON.stringify(deck)));
 
@@ -300,19 +333,19 @@ describe("POST /api/game/deck", () => {
     expect(mockRedis.set).toHaveBeenCalledTimes(1);
     const [key, value, mode, ttl] = mockRedis.set.mock.calls[0];
     expect(key).toMatch(/^deck:v\d+:1648$/);
-    expect(JSON.parse(value)).toEqual(makeDeck());
+    expect(JSON.parse(value)).toEqual(servedDeck());
     expect(mode).toBe("EX");
     expect(ttl).toBe(3600);
   });
 
   it("serves a cached deck without calling the model", async () => {
-    mockRedis.get.mockResolvedValueOnce(validDeckJson());
+    mockRedis.get.mockResolvedValueOnce(JSON.stringify(servedDeck()));
 
     const res = await POST(makeRequest());
 
     expect(res.status).toBe(200);
     expect(res.headers.get("x-deck-source")).toBe("generated");
-    expect(await res.json()).toEqual(makeDeck());
+    expect(await res.json()).toEqual(servedDeck());
     expect(mockCreate).not.toHaveBeenCalled();
     expect(mockGenerateEvents).not.toHaveBeenCalled();
   });
@@ -337,6 +370,6 @@ describe("POST /api/game/deck", () => {
 
     expect(res.status).toBe(200);
     expect(res.headers.get("x-deck-source")).toBe("generated");
-    expect(await res.json()).toEqual(makeDeck());
+    expect(await res.json()).toEqual(servedDeck());
   });
 });

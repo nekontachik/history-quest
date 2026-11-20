@@ -32,7 +32,7 @@ Acceptance tests written before the implementation, importing the real module pa
 ## Deck developer
 - `shared/game/deckSchema.ts`: zod `DeckSchema` + `validateDeck`. Pure and client-safe.
 - `lib/game/deck.ts` (`import "server-only"` first): `generateDeck()` takes the five events from the reference deck (the live events pipeline returns at most three per year), calls `SCENARIO_MODEL` once through OpenRouter with `deckPrompt`, strips code fences, validates, retries once with the errors appended, then throws a typed `DeckGenerationError`. Redis cache 1 hour, fail-open.
-- `POST /api/game/deck` → `Deck`. Rate-limited with `checkBucketLimit(ip, "scenario")`. Returns the reference deck with no model call when `DECK_FIXTURE=1` or `OPENROUTER_API_KEY` is missing, and as a fallback when generation fails (response header `x-deck-source: reference | generated`).
+- `POST /api/game/deck` → `Deck`. Rate-limited with `checkBucketLimit(ip, "scenario")`. Returns the reference deck with no model call unless `DECK_LIVE=1` (also when `DECK_FIXTURE=1` or `OPENROUTER_API_KEY` is missing), and as a fallback when generation fails (response header `x-deck-source: reference | generated`).
 - Acceptance: `tests/game/deck-schema.test.ts` passes unedited; `tests/api/game-deck.test.ts` covers fixture mode, a valid generated deck, a fenced response, invalid → retry → fallback, and 429.
 - Must not: touch UI or the engine.
 

@@ -21,6 +21,7 @@ import referenceDeckJson from "@/shared/game/referenceDeck1648.json";
  */
 const DECK_CACHE_VERSION = "v1";
 const DECK_CACHE_TTL_SECONDS = 60 * 60;
+const MODEL_TIMEOUT_MS = 45_000;
 
 type DeckMessage = ChatMessage | { role: "assistant"; content: string };
 
@@ -84,6 +85,25 @@ function extractJson(text: string): string {
 
 type ParseResult = { ok: true; deck: Deck } | { ok: false; errors: string[] };
 
+/**
+ * The model may only write cards. Its Chronicle must use the reference entry
+ * ids, and the entries themselves (text, source, survivesFading) are replaced
+ * with the hand-checked ones, so a generated deck can never state a false
+ * "real event" or point at an unvetted link.
+ */
+function pinChronicle(deck: Deck, reference: Deck): ParseResult {
+  const expected = reference.chronicle.map((e) => e.id);
+  const got = new Set(deck.chronicle.map((e) => e.id));
+  const missing = expected.filter((id) => !got.has(id));
+  if (missing.length > 0) {
+    return {
+      ok: false,
+      errors: [`deck chronicle: must use exactly these entry ids: ${expected.join(", ")}`],
+    };
+  }
+  return { ok: true, deck: { ...deck, chronicle: reference.chronicle.map((e) => ({ ...e })) } };
+}
+
 function parseDeck(text: string, year: number): ParseResult {
   if (text.trim().length === 0) return { ok: false, errors: ["deck: the answer was empty"] };
 
@@ -102,15 +122,20 @@ function parseDeck(text: string, year: number): ParseResult {
   if (res.deck.year !== year) {
     return { ok: false, errors: [`deck year: must be ${year}, found ${res.deck.year}`] };
   }
-  return res;
+  return pinChronicle(res.deck, referenceDeckJson as unknown as Deck);
 }
 
 async function askModel(spec: PromptSpec, messages: DeckMessage[]): Promise<string> {
-  const response = await getOpenRouterClient().chat.completions.create({
-    model: spec.model,
-    max_tokens: spec.maxTokens,
-    messages,
-  });
+  const response = await getOpenRouterClient().chat.completions.create(
+    {
+      model: spec.model,
+      max_tokens: spec.maxTokens,
+      messages,
+    },
+    // The player is waiting on the intro screen; give up and let the route
+    // fall back to the reference deck rather than hang on a slow model.
+    { timeout: MODEL_TIMEOUT_MS, maxRetries: 0 }
+  );
   const content: unknown = response.choices[0]?.message?.content;
   return typeof content === "string" ? content : "";
 }

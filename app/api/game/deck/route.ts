@@ -17,8 +17,15 @@ function referenceDeck(): NextResponse {
 }
 
 export async function POST(req: NextRequest) {
-  // Fixture mode costs nothing, so it is answered before the rate limit is spent.
-  if (process.env.DECK_FIXTURE === "1" || !process.env.OPENROUTER_API_KEY) {
+  // The hand-checked reference deck is the default. Live generation is opt-in
+  // (DECK_LIVE=1) until generated trace cards have been evaluated for fairness:
+  // a schema cannot tell whether a model-written "correct" side is right.
+  // This path costs nothing, so it is answered before the rate limit is spent.
+  if (
+    process.env.DECK_LIVE !== "1" ||
+    process.env.DECK_FIXTURE === "1" ||
+    !process.env.OPENROUTER_API_KEY
+  ) {
     return referenceDeck();
   }
 

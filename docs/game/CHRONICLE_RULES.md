@@ -63,3 +63,8 @@ Order inside `play`: read the card's truth and correct side from the state BEFOR
 - Return motivation is curiosity and authorship, never FOMO. No streaks, timers or decaying resources.
 - Stakes live inside the fiction. Every number or label the player sees has narrative meaning.
 - No clean "correct" playthrough: facts have right answers, decisions only have prices.
+
+## 8. Known limits of the prototype rules
+
+- `summit` cannot be reached in one run (at most three traces from `nobody`), and at most three entries can fade (Stability 0 collapses the run). Both are intended for a single chapter: the top rung and the last two entries belong to the campaign.
+- Live deck generation is off unless `DECK_LIVE=1`. A generated deck always carries the five hand-checked Chronicle entries, but the `correct` side of its trace cards is written by the model and has not been evaluated yet.
