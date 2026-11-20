@@ -1,0 +1,70 @@
+/* Chronicle — motion only. Everything here is switched off for
+   prefers-reduced-motion, leaving the end state in place. */
+
+.appear {
+  animation: appear 0.35s ease both;
+}
+
+.cardIn {
+  /* backwards only: a finished animation must not pin `transform`, the drag sets it inline. */
+  animation: cardIn 0.3s ease backwards;
+}
+
+.sheet {
+  animation: sheetUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.backdrop {
+  animation: appear 0.2s ease both;
+}
+
+/* The title of an entry losing its ink. End state = washed out. */
+.inkFading {
+  opacity: 0.5;
+  filter: blur(0.3px);
+  text-decoration: line-through;
+  text-decoration-color: rgba(241, 235, 223, 0.35);
+  animation: inkFade 1.4s ease-out both;
+}
+
+.flicker {
+  animation: flicker 5s ease-in-out infinite;
+}
+
+@keyframes appear {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes sheetUp {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+
+@keyframes inkFade {
+  from { opacity: 1; filter: blur(0); text-decoration-color: transparent; }
+  to { opacity: 0.5; filter: blur(0.3px); text-decoration-color: rgba(241, 235, 223, 0.35); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 0.9; }
+  42% { opacity: 0.72; }
+  50% { opacity: 1; }
+  63% { opacity: 0.8; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .appear,
+  .cardIn,
+  .sheet,
+  .backdrop,
+  .inkFading,
+  .flicker {
+    animation: none;
+  }
+}
