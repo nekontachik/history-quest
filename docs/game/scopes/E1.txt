@@ -1,3 +1,0 @@
-# E1 — Deck quality eval (Wave 3)
-
-scripts/eval/game/**

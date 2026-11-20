@@ -1,140 +1,112 @@
 // ---------------------------------------------------------------------------
-// Chrono Agent — frozen game contract (phase 1 prototype).
-// Source of truth: docs/game/GAME_SPEC.md §3–4, docs/game/EXECUTION_PLAN.md G0.
-// Later tasks (T1–T8/I1/E1) code AGAINST this file and must not change it.
+// Chronicle prototype — game contract.
+// Source of truth for the numbers: docs/game/CHRONICLE_RULES.md.
+// Pure types only: safe to import from client and server code.
 // ---------------------------------------------------------------------------
 
-/** The four meters that drive every run (GAME_SPEC §2 step 4). */
+/** The four meters. `stability` is shown to the player as the Chronicle's state. */
 export type Meter = "stability" | "people" | "power" | "faith";
 
-/** One of the two labelled actions on a card (GAME_SPEC §4). */
-export interface CardOption {
-  /** Short action label, e.g. "Give the medicine". */
-  label: string;
-  /** 1–3 meters changed by an integer in [-25, 25]. Enforced by schema. */
-  effects: Partial<Record<Meter, number>>;
-  /** One-sentence consequence shown after the swipe, ≤ 220 chars. */
-  consequence: string;
+export type Side = "left" | "right";
+
+/** fork = follow history or change it; trace = spot the detail; hint = pay for knowledge. */
+export type CardKind = "fork" | "trace" | "hint";
+
+/** One real event of the year, as written in the hero's Chronicle. */
+export interface ChronicleEntry {
+  id: string;
+  /** Short name of the real event. */
+  title: string;
+  /** What the Chronicle says will happen — trace cards are decided from this text alone. */
+  summary: string;
+  /** Source for the real event (Wikipedia or similar). */
+  sourceUrl: string;
+  /**
+   * Hidden from the player. Whether the event still happens once history has
+   * bent and the entry has faded. A clear entry is ALWAYS true regardless.
+   */
+  survivesFading: boolean;
 }
 
-/** Four possible conflict types (GAME_SPEC §5 rule 3). */
-export type ConflictType =
-  | "life_vs_history"
-  | "one_vs_many"
-  | "now_vs_later"
-  | "truth_vs_peace";
+export type EntryState = "clear" | "faded";
 
-/** One card in the 12-card deck (GAME_SPEC §4). */
+export interface CardOption {
+  /** Short action label, ≤ 40 chars. */
+  label: string;
+  /** 1–3 meters, non-zero integers in [-25, 25]. */
+  effects: Partial<Record<Meter, number>>;
+  /** One sentence shown after the choice, ≤ 220 chars. */
+  consequence: string;
+  /** Fork only: the entry this option fades first when a fade is due. */
+  fadesEntryId?: string;
+  /** Hint only: choosing this option reveals that entry's `survivesFading`. */
+  revealsEntryId?: string;
+}
+
 export interface Card {
   id: string;
-  /** Must match a role in the character pool for this era. */
+  kind: CardKind;
+  /** One of PORTRAIT_ROLE_IDS (constants/game.ts). */
   roleId: string;
-  /** Who speaks the line, e.g. "Colonel's wife". */
   speakerName: string;
-  /** The dilemma text, ≤ 220 chars. */
+  /** What the speaker says, ≤ 220 chars. */
   line: string;
-  /** Set when the card is tied to a real event of the year. */
-  realEventRef?: string;
-  conflictType: ConflictType;
+  /** Required for trace; optional for fork and hint. */
+  chronicleRef?: string;
+  /** Trace only: the correct side WHILE the referenced entry is true. It flips when the entry is false. */
+  correct?: Side;
   left: CardOption;
   right: CardOption;
 }
 
-/**
- * A deck is exactly 12 cards. The length is enforced in `DeckSchema`
- * (shared/game/schemas.ts); the TypeScript surface stays `Card[]` so
- * callers can map/filter without casting.
- */
-export type Deck = Card[];
-
-/** Mission card (GAME_SPEC §2 step 2). */
-export interface Mission {
-  /** Short mission title shown at run start, e.g. the year + prompt. */
-  title: string;
-  /** Optional bonus goal from a fixed template list (constants/game.ts). */
-  bonusGoal?: {
-    /** Template id from BONUS_GOALS. */
-    id: string;
-    /** The human-readable goal text (resolved from the template). */
-    text: string;
-  };
+export interface Deck {
+  year: number;
+  /** Exactly CHRONICLE_SIZE entries. */
+  chronicle: ChronicleEntry[];
+  /** Exactly DECK_SIZE cards. */
+  cards: Card[];
 }
 
-/**
- * Union of the 13 ending ids encoded in constants/game.ts (GAME_SPEC §3).
- * 8 collapse + 5 survival.
- */
-export type EndingId =
-  // Collapse endings (meter × bound)
-  | "stability_0"
-  | "stability_100"
-  | "people_0"
-  | "people_100"
-  | "power_0"
-  | "power_100"
-  | "faith_0"
-  | "faith_100"
-  // Survival endings (dominant meter + "Quiet Line")
-  | "survival_stability"
-  | "survival_people"
-  | "survival_power"
-  | "survival_faith"
-  | "survival_quiet_line";
+/** The hero's standing, lowest to highest. */
+export type Rung = "nobody" | "noticed" | "needed" | "influential" | "summit";
 
-/** Fixed ending descriptor (GAME_SPEC §3). */
-export interface Ending {
-  id: EndingId;
-  kind: "collapse" | "survival";
-  /** i18n key for the ending name (resolved by T8 in messages/*.json). */
-  nameKey: string;
-  /** i18n key for the ending description. */
-  descKey: string;
-}
+export type WorldFate = "as_it_was" | "shifted" | "unrecognisable" | "torn";
 
-/**
- * One row of the decision log — recorded by the run engine (T4) and
- * replayed inside the artifact (T8).
- */
-export interface DecisionLogEntry {
+export interface LogEntry {
   cardId: string;
-  side: "left" | "right";
-  /** The option's `effects` as applied (post-clamp). */
-  effects: Partial<Record<Meter, number>>;
-  /** Meter snapshot AFTER the choice was applied (0–100 clamped). */
+  side: Side;
+  /** Effects as applied (after the hero's Stability halving, before clamping). */
+  applied: Partial<Record<Meter, number>>;
   metersAfter: Record<Meter, number>;
-  /** The consequence line that was shown to the player. */
-  consequence: string;
+  /** Entries that faded because of this choice. */
+  fadedEntryIds: string[];
+  /** Trace cards only: whether the player picked the correct side. */
+  traceCorrect?: boolean;
+  /** Hint cards only: the entry whose truth was revealed. */
+  revealedEntryId?: string;
 }
 
-/** Immutable run state (T4 reducer input/output). */
 export interface RunState {
   meters: Record<Meter, number>;
-  deck: Deck;
+  /** Entry id → state. Every entry starts "clear". Fading never reverts. */
+  chronicle: Record<string, EntryState>;
+  /** Entry id → revealed `survivesFading`, for entries bought through a hint. */
+  revealed: Record<string, boolean>;
+  rung: Rung;
+  /** Index of the next card to play. */
   cardIndex: number;
-  decisions: DecisionLogEntry[];
-  status: "playing" | "collapsed" | "survived";
-  endingId?: EndingId;
+  /** Lowest Stability reached so far — drives fading. */
+  lowestStability: number;
+  log: LogEntry[];
+  status: "playing" | "collapsed" | "finished";
+  collapsedMeter?: Meter;
 }
 
-/**
- * Generated keepsake at the end of a run (GAME_SPEC §2 step 7).
- * A collapse ending yields `rare: true` (never an empty failure).
- */
-export interface Artifact {
-  id: string;
-  endingId: EndingId;
-  rare: boolean;
-  title: string;
-  summary: string;
-  coverUrl: string;
-  year: number;
-  /** ISO-8601 creation timestamp. */
-  createdAt: string;
-  /** Anonymous player id (cookie, see T8 middleware). */
-  playerId: string;
-  /** The full decision log of the run that produced this artifact. */
-  lineage: DecisionLogEntry[];
+export interface RunResult {
+  rung: Rung;
+  worldFate: WorldFate;
+  collapsedMeter?: Meter;
 }
 
-/** The three image kinds we generate (GAME_SPEC §6, ART_DIRECTION §6). */
+/** Kept for the image layer (portraits, scenes, artifact covers). */
 export type ImageKind = "portrait" | "scene" | "artifact";
