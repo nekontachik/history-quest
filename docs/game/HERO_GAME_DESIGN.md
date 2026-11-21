@@ -49,7 +49,7 @@ decidable from the entry text alone. While the entry is true, trusting the Chron
 once it is faded and no longer true, the speaker is right. A correct trace raises the rung.
 
 **Hint (exactly 2).** Someone offers knowledge for a price paid in a meter: pay, and you learn
-whether a given entry will still happen even if history bends. Declining costs nothing and
+whether a given entry will still happen even if history bends. Declining still moves a meter a little (every option must) and
 reveals nothing.
 
 ## 4. The hero, the screen and the result
