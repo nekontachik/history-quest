@@ -21,10 +21,22 @@ import {
  * Prompts live in lib/ai/prompts.ts (shared with the eval harness).
  */
 
-const client = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENROUTER_API_KEY,
-});
+let cachedClient: OpenAI | null = null;
+
+/**
+ * Created on first use, not at module load: `next build` imports every route
+ * to collect page data, and the SDK throws when no key is set, which broke
+ * builds in environments without OPENROUTER_API_KEY (preview deployments).
+ */
+export function getOpenRouterClient(): OpenAI {
+  if (!cachedClient) {
+    cachedClient = new OpenAI({
+      baseURL: "https://openrouter.ai/api/v1",
+      apiKey: process.env.OPENROUTER_API_KEY,
+    });
+  }
+  return cachedClient;
+}
 
 export async function generateEventTitles(
   year: number,
@@ -32,7 +44,7 @@ export async function generateEventTitles(
 ): Promise<HistoricalEvent[]> {
   const spec = eventTitlesPrompt(year, lang);
 
-  const response = await client.chat.completions.create({
+  const response = await getOpenRouterClient().chat.completions.create({
     model: spec.model,
     max_tokens: spec.maxTokens,
     messages: spec.messages,
@@ -52,7 +64,7 @@ export async function enrichEventWithContext(
 ): Promise<string> {
   const spec = enrichEventPrompt(event, tavilySnippets, lang);
 
-  const response = await client.chat.completions.create({
+  const response = await getOpenRouterClient().chat.completions.create({
     model: spec.model,
     max_tokens: spec.maxTokens,
     messages: spec.messages,
@@ -113,7 +125,7 @@ export async function streamScenario({
     canary: process.env.REDTEAM_CANARY, // red-team only; undefined in prod
   });
 
-  const stream = await client.chat.completions.create({
+  const stream = await getOpenRouterClient().chat.completions.create({
     model: spec.model,
     max_tokens: spec.maxTokens,
     stream: true,

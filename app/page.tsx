@@ -1,3 +1,4 @@
+import Link from "next/link";
 import YearSection from "@/components/features/YearSection";
 import HomeSubtitle from "@/components/layout/HomeSubtitle";
 
@@ -9,6 +10,13 @@ export default function HomePage() {
       </h1>
       <HomeSubtitle />
       <YearSection />
+      <Link
+        href="/play"
+        data-testid="play-chronicle-link"
+        className="relative mt-6 rounded-lg px-3 py-2 text-sm text-gray-400 underline decoration-gray-600 underline-offset-4 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
+      >
+        Play Chronicle — 1648
+      </Link>
     </main>
   );
 }

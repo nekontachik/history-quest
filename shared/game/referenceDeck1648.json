@@ -1,0 +1,268 @@
+{
+  "year": 1648,
+  "chronicle": [
+    {
+      "id": "zhovti-vody",
+      "title": "Battle of Zhovti Vody",
+      "summary": "Between late April and mid-May 1648, at Zhovti Vody, Khmelnytsky's Cossacks and Tugay Bey's Crimean Tatars destroy the Crown vanguard led by Stefan Potocki. The registered Cossacks sent against the rebels go over to them.",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Battle_of_Zhovti_Vody",
+      "survivesFading": true
+    },
+    {
+      "id": "king-death",
+      "title": "Death of King Władysław IV",
+      "summary": "On 20 May 1648 King Władysław IV Vasa dies at Merkinė in Lithuania. The Commonwealth is left without a king just as the uprising breaks out.",
+      "sourceUrl": "https://en.wikipedia.org/wiki/W%C5%82adys%C5%82aw_IV_Vasa",
+      "survivesFading": true
+    },
+    {
+      "id": "korsun",
+      "title": "Battle of Korsun",
+      "summary": "On 26 May 1648, near Korsun, the Cossacks and Tatars trap the retreating Crown army in an ambush and destroy it. Both Crown hetmans, Mikołaj Potocki and Marcin Kalinowski, are taken prisoner.",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Battle_of_Korsun",
+      "survivesFading": false
+    },
+    {
+      "id": "pyliavtsi",
+      "title": "Battle of Pyliavtsi",
+      "summary": "In September 1648, at Pyliavtsi, the Commonwealth's large new army panics and flees before Khmelnytsky's Cossacks and Tatars. The victory goes to the rebels, who take the abandoned camp.",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Battle_of_Pyliavtsi",
+      "survivesFading": true
+    },
+    {
+      "id": "casimir-election",
+      "title": "Election of John II Casimir",
+      "summary": "In November 1648 the nobility of the Commonwealth elect John II Casimir Vasa, half-brother of the dead king, as King of Poland. His rival, his brother Charles Ferdinand, withdraws.",
+      "sourceUrl": "https://en.wikipedia.org/wiki/1648_Polish%E2%80%93Lithuanian_royal_election",
+      "survivesFading": false
+    }
+  ],
+  "cards": [
+    {
+      "id": "c01",
+      "kind": "fork",
+      "roleId": "peasant",
+      "speakerName": "Odarka, a neighbour",
+      "line": "My boy rows for the registered Cossacks, sent down the Dnipro against Khmelnytsky. You have the look of a man who knows things. Do I fetch him home before it starts?",
+      "chronicleRef": "zhovti-vody",
+      "left": {
+        "label": "Say only God knows",
+        "effects": { "people": -5, "faith": 4 },
+        "consequence": "She leaves with no answer and prays three nights at the roadside cross; the village remembers that you had no comfort to give."
+      },
+      "right": {
+        "label": "Promise the boy will live",
+        "effects": { "stability": -6, "people": 8 },
+        "consequence": "She believes you far too easily, and by morning half the village has heard that you know how battles end.",
+        "fadesEntryId": "zhovti-vody"
+      }
+    },
+    {
+      "id": "c02",
+      "kind": "trace",
+      "roleId": "scout",
+      "speakerName": "A rider from the steppe",
+      "line": "I rode two days from Zhovti Vody. It is finished: young Potocki's hussars broke the Cossacks, and Tugay Bey's Tatars sold them to the Crown. Bury your grain. The lords are coming home angry.",
+      "chronicleRef": "zhovti-vody",
+      "correct": "right",
+      "left": {
+        "label": "Believe him: bury the grain",
+        "effects": { "people": -6, "power": -3 },
+        "consequence": "The village digs its pits by night and practises bowing, and for a week nobody asks what you think."
+      },
+      "right": {
+        "label": "Trust the Chronicle: stay calm",
+        "effects": { "people": 6, "faith": -4 },
+        "consequence": "The grain stays above ground; the rider spits, and the priest asks quietly where a ploughman finds such certainty."
+      }
+    },
+    {
+      "id": "c03",
+      "kind": "fork",
+      "roleId": "wife",
+      "speakerName": "Colonel's wife",
+      "line": "My husband rides with Hetman Potocki's army out of Korsun. I fed your village through the hunger winter. If you have heard anything of the road ahead of him, tell me. I beg you.",
+      "chronicleRef": "korsun",
+      "left": {
+        "label": "Warn her of the ambush",
+        "effects": { "stability": -18, "power": 10 },
+        "consequence": "Her rider leaves before dawn with your words sewn into his cuff, and a colonel of the Crown now owes a peasant more than he can repay.",
+        "fadesEntryId": "korsun"
+      },
+      "right": {
+        "label": "Say you know nothing",
+        "effects": { "people": -10, "faith": -5 },
+        "consequence": "She thanks you anyway; within the month the manor's kitchens close to the village, and you hear her voice in every church bell."
+      }
+    },
+    {
+      "id": "c04",
+      "kind": "hint",
+      "roleId": "merchant",
+      "speakerName": "Merchant from Lviv",
+      "line": "I carry letters for both camps and I sell what is certain. For your seed silver I will tell you how firmly the trap at Korsun is set: whether one loose tongue could still spring it.",
+      "chronicleRef": "korsun",
+      "left": {
+        "label": "Pay with the seed silver",
+        "effects": { "people": -7 },
+        "consequence": "He weighs the coins twice, then tells you in a whisper what the Korsun page of your book is worth once the world starts to slip.",
+        "revealsEntryId": "korsun"
+      },
+      "right": {
+        "label": "Keep your silver",
+        "effects": { "people": 3, "power": -3 },
+        "consequence": "He shrugs and rides on to sell the same certainty to someone bolder; the silver stays in the seed chest where it belongs."
+      }
+    },
+    {
+      "id": "c05",
+      "kind": "fork",
+      "roleId": "doctor",
+      "speakerName": "The stranger doctor",
+      "line": "Camp fever is in the tents: forty down, more by Sunday. These white pills end it in three days. They were made four hundred years from now. Your book never mentions them, does it?",
+      "left": {
+        "label": "Refuse the pills",
+        "effects": { "people": -15, "faith": 5 },
+        "consequence": "The priests walk the tents with incense and the carts go out at dusk; people say the Lord is testing the host, and you let them say it."
+      },
+      "right": {
+        "label": "Give them to the camp",
+        "effects": { "stability": -20, "people": 20 },
+        "consequence": "The fever breaks in three days, and an army that should have been thinner marches toward autumn with men your Chronicle counted as dead.",
+        "fadesEntryId": "pyliavtsi"
+      }
+    },
+    {
+      "id": "c06",
+      "kind": "fork",
+      "roleId": "monk",
+      "speakerName": "Brother Havrylo",
+      "line": "This lay in our alms box: a bracelet with a glass face that ticks, and a note in our tongue but in no hand I know. 'When the king dies, the wrong brother must not be crowned.' Is it yours?",
+      "chronicleRef": "casimir-election",
+      "left": {
+        "label": "Take the bracelet and the note",
+        "effects": { "stability": -12, "power": 10, "faith": -8 },
+        "consequence": "The ticking thing rides inside your shirt now, and you catch yourself reading the note as an instruction rather than a warning.",
+        "fadesEntryId": "casimir-election"
+      },
+      "right": {
+        "label": "Have him wall it up",
+        "effects": { "stability": 8, "power": -5 },
+        "consequence": "Havrylo mortars it into the cellar wall, and with it the only proof that someone else is writing in the margins of this year."
+      }
+    },
+    {
+      "id": "c07",
+      "kind": "trace",
+      "roleId": "elder",
+      "speakerName": "Village elder",
+      "line": "A carter swears the Crown army slipped out of Korsun untouched, both hetmans in the saddle and their guns with them. Do I send our lads home to the fields, or keep them under arms?",
+      "chronicleRef": "korsun",
+      "correct": "left",
+      "left": {
+        "label": "Chronicle: keep them armed",
+        "effects": { "people": -5, "power": 6 },
+        "consequence": "The lads stay in the woods with their scythes set upright, and the unsown strips behind the village grow another week of weeds."
+      },
+      "right": {
+        "label": "Trust the carter: send them home",
+        "effects": { "people": 5, "power": -6 },
+        "consequence": "The lads come home to their ploughs and their mothers, and the village goes back to owning nothing sharper than a sickle."
+      }
+    },
+    {
+      "id": "c08",
+      "kind": "fork",
+      "roleId": "scout",
+      "speakerName": "Cossack scout",
+      "line": "I took this off a dead stranger: a slab of black glass. Touch it and it shows every Crown banner camped at Pyliavtsi, as lights on a map. The hetman would make its bearer a rich man.",
+      "chronicleRef": "pyliavtsi",
+      "left": {
+        "label": "Smash it in the river",
+        "effects": { "stability": 10, "power": -8 },
+        "consequence": "The glass cracks on a stone and sinks; the scout calls you a coward and rides off to tell the camp what you threw away."
+      },
+      "right": {
+        "label": "Carry it to the hetman",
+        "effects": { "stability": -18, "power": 22 },
+        "consequence": "The hetman studies the lights for a long time, then studies you; the battle ahead will no longer be the one your Chronicle describes.",
+        "fadesEntryId": "pyliavtsi"
+      }
+    },
+    {
+      "id": "c09",
+      "kind": "hint",
+      "roleId": "doctor",
+      "speakerName": "The stranger doctor",
+      "line": "I have read past the last page of your book. Hide me among your wounded as your cousin, swear to it on the cross, and I will tell you whether November's crown still falls where the page says.",
+      "chronicleRef": "casimir-election",
+      "left": {
+        "label": "Swear he is your cousin",
+        "effects": { "people": -5, "faith": -5 },
+        "consequence": "You kiss the cross on a lie, the wounded shift to make room, and he tells you quietly what a bent year does to the election.",
+        "revealsEntryId": "casimir-election"
+      },
+      "right": {
+        "label": "Refuse to swear",
+        "effects": { "power": -4, "faith": 4 },
+        "consequence": "He nods as if he expected it and walks toward the officers' tents, where someone else will hear what you would not buy."
+      }
+    },
+    {
+      "id": "c10",
+      "kind": "fork",
+      "roleId": "elder",
+      "speakerName": "Village elder",
+      "line": "Tugay Bey's riders are roping people from our own villages as their wage for the summer. You know the ford they will cross tonight. The hetman's men look away. Will you?",
+      "left": {
+        "label": "Lead men to the ford",
+        "effects": { "stability": -16, "people": 15, "power": -6 },
+        "consequence": "Sixty captives walk home by dawn, and by noon the Tatar camp knows which village broke the hetman's bargain.",
+        "fadesEntryId": "casimir-election"
+      },
+      "right": {
+        "label": "Look away, as history did",
+        "effects": { "stability": 8, "people": -14, "faith": -6 },
+        "consequence": "The column crosses in the dark, the alliance holds, and you learn that you can recognise a neighbour by her voice alone."
+      }
+    },
+    {
+      "id": "c11",
+      "kind": "trace",
+      "roleId": "monk",
+      "speakerName": "Brother Havrylo",
+      "line": "Word from Warsaw by way of the Lavra: the electors have chosen Charles Ferdinand, the war party's prince-bishop. Do we bar the church doors, or ring the bells for peace?",
+      "chronicleRef": "casimir-election",
+      "correct": "right",
+      "left": {
+        "label": "Trust the Lavra: bar the doors",
+        "effects": { "people": -5, "faith": 5 },
+        "consequence": "The doors are barred and the grain moved into the crypt; the village spends the week waiting for a war it has been told is certain."
+      },
+      "right": {
+        "label": "Chronicle: it is John Casimir",
+        "effects": { "people": 5, "faith": -4 },
+        "consequence": "You say the name John Casimir aloud in the monk's own church; the village breathes out, and Havrylo asks who you think you are."
+      }
+    },
+    {
+      "id": "c12",
+      "kind": "fork",
+      "roleId": "envoy",
+      "speakerName": "The hetman's envoy",
+      "line": "The hetman sits before Zamość and hears that a ploughman here names battles before they are fought. Come to his tent and tell him what the new king will do, or swear before these men you are a fraud.",
+      "chronicleRef": "casimir-election",
+      "left": {
+        "label": "Swear you are a fraud",
+        "effects": { "stability": 6, "people": -10, "power": -8 },
+        "consequence": "You call yourself a liar in front of everyone who believed you, and the envoy rides back with nothing but a village's disappointment."
+      },
+      "right": {
+        "label": "Ride to the hetman's tent",
+        "effects": { "stability": -22, "power": 20, "faith": -8 },
+        "consequence": "You sit at the hetman's right hand and speak of years to come, and with each sentence the ink in your Chronicle grows paler.",
+        "fadesEntryId": "casimir-election"
+      }
+    }
+  ]
+}
